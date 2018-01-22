@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">PlayCanvasApp</string>
+    <string name="clip_rect">clipRect</string>
+</resources>
