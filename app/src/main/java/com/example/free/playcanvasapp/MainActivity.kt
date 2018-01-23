@@ -1,6 +1,5 @@
 package com.example.free.playcanvasapp
 
-import android.graphics.pdf.PdfDocument
 import android.support.v7.app.AppCompatActivity
 import android.support.design.widget.TabLayout
 import android.os.Bundle
@@ -11,8 +10,8 @@ import android.support.v4.app.FragmentPagerAdapter
 import android.support.v4.view.ViewPager
 
 class MainActivity : AppCompatActivity() {
-    var tabLayout: TabLayout? = null
-    var pager: ViewPager? = null
+    private var tabLayout: TabLayout? = null
+    private var pager: ViewPager? = null
     var pageModels: MutableList<PageModel> = emptyList<PageModel>().toMutableList()
 
     init {

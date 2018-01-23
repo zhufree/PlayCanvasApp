@@ -7,8 +7,6 @@ import android.graphics.Canvas
 import android.graphics.Paint
 import android.support.v7.widget.AppCompatSeekBar
 import android.util.AttributeSet
-import android.util.Log
-import android.view.View
 import android.widget.*
 
 /**
@@ -16,15 +14,15 @@ import android.widget.*
  *
  */
 class ClipRectLayout : LinearLayout {
-    var paint = Paint(Paint.ANTI_ALIAS_FLAG)
+    private var paint = Paint(Paint.ANTI_ALIAS_FLAG)
+    private var horizontalSeekBar: AppCompatSeekBar? = null
+    private var verticalSeekBar: VerticalSeekBar? = null
     var bitmap: Bitmap? = null
-    var seekBar: AppCompatSeekBar? = null
     var leftBorder: Float = 0f
-    var topBorder: Float = 70f
-    var rightBorder: Float = 0f
-    var bottomBorder: Float = 0f
+    var topBorder: Float = 0f
+    private var rightBorder: Float = 0f
+    private var bottomBorder: Float = 0f
 
-    val TAG = "TAG"
 
     constructor(context: Context) : super(context)
     constructor(context: Context, attrs: AttributeSet?) : super(context, attrs)
@@ -36,17 +34,28 @@ class ClipRectLayout : LinearLayout {
 
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()
-        seekBar = findViewById(R.id.seek_bar)
-//        durationValueTv = findViewById(R.id.durationValueTv) as TextView
-//        durationValueTv.setText(context.getString(R.string.ms_with_value, duration))
-        seekBar?.max = 100
-        seekBar?.progress = 20
-        seekBar?.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+        horizontalSeekBar = findViewById(R.id.horizontal_seek_bar)
+        verticalSeekBar = findViewById(R.id.vertical_seek_bar)
+        horizontalSeekBar?.progress = 20
+        verticalSeekBar?.progress = 100
+        horizontalSeekBar?.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) {
-                leftBorder = progress * 0.01f * width
-                Log.i(TAG, "" + leftBorder)
+                leftBorder = progress * 0.01f * bitmap!!.width
                 invalidate()
-//                durationValueTv.setText(context.getString(R.string.ms_with_value, duration))
+            }
+
+            override fun onStartTrackingTouch(seekBar: SeekBar) {
+
+            }
+
+            override fun onStopTrackingTouch(seekBar: SeekBar) {
+
+            }
+        })
+        verticalSeekBar?.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+            override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) {
+                topBorder = (100-progress) * 0.01f * bitmap!!.height
+                invalidate()
             }
 
             override fun onStartTrackingTouch(seekBar: SeekBar) {
@@ -63,17 +72,21 @@ class ClipRectLayout : LinearLayout {
 
     override fun dispatchDraw(canvas: Canvas?) {
         super.dispatchDraw(canvas)
+
+//        绘图位置不变，滑动时修改clip边距
         rightBorder = canvas!!.width.toFloat()
         bottomBorder = canvas.height.toFloat()
+        val leftStart = width.div(2) - bitmap?.width!!.div(2f)
+        val topStart = height.div(2) - bitmap?.height!!.div(2f)
         canvas.save()
 //        原来的方形范围是 left, top, left + bitmap.width, top + bitmap.height
 //        left: 左边到容器左边的距离
 //        top: 上边到容器顶部的距离
 //        right: 右边到容器左边的距离，所以是left + width
 //        bottom: 同理
-        Log.i(TAG, " "+ leftBorder+ topBorder+rightBorder+ bottomBorder)
-        canvas.clipRect(leftBorder, topBorder, rightBorder, bottomBorder)
-        canvas.drawBitmap(bitmap,  width.div(2)-bitmap?.width!!.div(2f), topBorder, paint)
+//        Log.i(TAG, " "+ leftBorder+ topBorder+rightBorder+ bottomBorder)
+        canvas.clipRect(leftStart + leftBorder, topStart + topBorder, rightBorder, bottomBorder)
+        canvas.drawBitmap(bitmap,  leftStart, topStart, paint)
         canvas.restore()
     }
 }

@@ -15,8 +15,8 @@ import android.view.ViewStub
  */
 
 class PageFragment : Fragment() {
-    @LayoutRes var titleRes: Int = 0
-    @LayoutRes var layoutRes: Int = 0
+    private @LayoutRes var titleRes: Int = 0
+    private @LayoutRes var layoutRes: Int = 0
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater!!.inflate(R.layout.fragment_page, container, false)
